@@ -1,0 +1,8 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://cccjjbwqxmoq3"]
+
+[ext_resource type="FontFile" uid="uid://cy7xgwcednd32" path="res://assets/m5x7.ttf" id="1_l1b6k"]
+
+[resource]
+Label/font_sizes/font_size = 50
+Label/fonts/font = ExtResource("1_l1b6k")
+VBoxContainer/constants/separation = 10

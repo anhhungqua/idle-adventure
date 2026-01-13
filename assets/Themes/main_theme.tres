@@ -1,0 +1,39 @@
+[gd_resource type="Theme" load_steps=5 format=3 uid="uid://mox4kxu33gqu"]
+
+[ext_resource type="FontFile" uid="uid://cy7xgwcednd32" path="res://assets/m5x7.ttf" id="1_nlsl7"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_obc0c"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oujr8"]
+content_margin_left = 10.0
+content_margin_top = 5.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+bg_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nlsl7"]
+content_margin_left = 10.0
+content_margin_top = 5.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[resource]
+Button/font_sizes/font_size = 45
+Button/fonts/font = ExtResource("1_nlsl7")
+Button/styles/focus = SubResource("StyleBoxEmpty_obc0c")
+Button/styles/hover = SubResource("StyleBoxFlat_oujr8")
+Button/styles/normal = SubResource("StyleBoxFlat_oujr8")
+Button/styles/pressed = SubResource("StyleBoxFlat_nlsl7")
+HBoxContainer/constants/separation = 0
+Label/font_sizes/font_size = 50
+Label/fonts/font = ExtResource("1_nlsl7")
+RichTextLabel/font_sizes/normal_font_size = 30
+RichTextLabel/fonts/normal_font = ExtResource("1_nlsl7")

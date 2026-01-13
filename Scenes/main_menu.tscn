@@ -1,0 +1,42 @@
+[gd_scene load_steps=4 format=3 uid="uid://c633qk2yd4ulf"]
+
+[ext_resource type="Script" uid="uid://7w7xvocqjjx5" path="res://Scripts/main_menu.gd" id="1_1ehe0"]
+[ext_resource type="Texture2D" uid="uid://d0c2hktwd5bqe" path="res://assets/Mainmenubackground.png" id="1_28flt"]
+[ext_resource type="Texture2D" uid="uid://cq2rb5mvv60ag" path="res://assets/Startbutton.png" id="3_ce3w2"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_1ehe0")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_28flt")
+expand_mode = 1
+
+[node name="Button" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -129.28345
+offset_top = -147.0
+offset_right = 129.28345
+grow_horizontal = 2
+grow_vertical = 0
+focus_mode = 0
+icon = ExtResource("3_ce3w2")
+flat = true
+expand_icon = true

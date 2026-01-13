@@ -1,0 +1,53 @@
+[gd_scene load_steps=6 format=3 uid="uid://c74hsm5jt8l2g"]
+
+[ext_resource type="Script" uid="uid://dubpaklhm1ovr" path="res://Scripts/player.gd" id="1_6t5aa"]
+[ext_resource type="Texture2D" uid="uid://hdxls8ww8gvc" path="res://assets/Player.png" id="2_6t5aa"]
+[ext_resource type="Theme" uid="uid://mox4kxu33gqu" path="res://assets/Themes/main_theme.tres" id="3_fkybt"]
+[ext_resource type="Texture2D" uid="uid://cu6sf6x8jg3ha" path="res://assets/HealthBarEmpty.png" id="4_fkybt"]
+[ext_resource type="Texture2D" uid="uid://cntsj5xvq8hoj" path="res://assets/OnlyHealth.png" id="5_fkybt"]
+
+[node name="Player" type="Node2D"]
+texture_filter = 1
+script = ExtResource("1_6t5aa")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(311, 336)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("2_6t5aa")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme = ExtResource("3_fkybt")
+
+[node name="player_health" type="TextureProgressBar" parent="Control"]
+unique_name_in_owner = true
+layout_mode = 1
+offset_left = 141.0
+offset_top = 114.0
+offset_right = 832.0
+offset_bottom = 483.0
+scale = Vector2(0.5, 0.5)
+value = 100.0
+texture_under = ExtResource("4_fkybt")
+texture_progress = ExtResource("5_fkybt")
+texture_progress_offset = Vector2(178, 166)
+
+[node name="health_text" type="Label" parent="Control/player_health"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -3.5
+offset_top = -14.5
+offset_right = 57.5
+offset_bottom = 8.5
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_alignment = 1
