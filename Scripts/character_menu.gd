@@ -10,6 +10,7 @@ extends Control
 @onready var gold: Label = %Gold
 var button_img = preload("res://assets/Button.png")
 var equip_button : TextureButton = null
+var unequip_button : TextureButton = null
 
 
 var ui_slots := []
@@ -20,6 +21,8 @@ var equipped := {
 	"accessory": null,
 }
 @onready var weapon_icon: TextureRect = %Weapon_icon
+@onready var weapon_slot: TextureButton = %Weapon_slot
+signal bonus_damage(amount)
 
 var current_gold := 0
 
@@ -59,6 +62,8 @@ func setup_inventory():
 	for index in range(ui_slots.size()):
 		ui_slots[index].pressed.connect(func():
 			click_items(index))
+	weapon_slot.pressed.connect(func():
+		click_equipment())
 
 func update_level(amount): #lấy giá trị connect từ main từ player
 	level.text = "Level" + " " + str(amount)
@@ -77,7 +82,7 @@ func add_item(item_key):
 
 	for a in range(inventory.size()): #Check slot trống để tạo item mới
 		if inventory[a] == null:
-			inventory[a] = {"id": item_key, "amount": 1, "item_type": Itemdatabase.items[item_key]["item_type"]}
+			inventory[a] = {"id": item_key, "amount": 1, "item_type": Itemdatabase.items[item_key]["item_type"], "wearable": Itemdatabase.items[item_key]["wearable"]}
 			update_ui_slot(a)
 			return
 			
@@ -134,7 +139,7 @@ func click_items(index):
 		return
 
 	if inventory[index] != null: #check koi item trong data đó có phải weapon không
-		if inventory[index]["item_type"] == "weapon":
+		if inventory[index]["wearable"] == true:
 			equip_button = TextureButton.new()
 			ui_slots[index].add_child(equip_button)
 			equip_button.texture_normal = button_img
@@ -164,15 +169,62 @@ func equip(index):
 	#xóa item mới trong inventory
 	var inventory_index = inventory[index]
 	var inventory_index_id = inventory_index["id"]
+	if inventory[index]["wearable"] == true:
+		if equipped["weapon"] == null:
+			equipped["weapon"] = {"id": inventory_index_id, "item_type": inventory_index["item_type"], "bonus_damage": Itemdatabase.items[inventory_index_id]["bonus_damage"]}
+			weapon_icon.texture = Itemdatabase.items[inventory_index_id]["icon"]
+			remove_item(inventory[index]["id"], 1)
+			equip_button.queue_free()
+			bonus_damage.emit(Itemdatabase.items[inventory_index_id]["bonus_damage"])
+		else:
+			var old_weapon_id = equipped["weapon"]["id"]
+			var old_weapon_bonus = equipped["weapon"]["bonus_damage"]
+			bonus_damage.emit(-old_weapon_bonus)
+			equipped["weapon"] = {"id": inventory_index_id, "item_type": inventory_index["item_type"], "bonus_damage": Itemdatabase.items[inventory_index_id]["bonus_damage"]}
+			weapon_icon.texture = Itemdatabase.items[inventory_index_id]["icon"]
+			add_item(old_weapon_id)
+			remove_item(inventory[index]["id"], 1)
+			equip_button.queue_free()
+			bonus_damage.emit(Itemdatabase.items[inventory_index_id]["bonus_damage"])
+			
+func click_equipment():
+	if unequip_button != null: 
+		#check koi khi click nút mới 
+		#nút trước đó đã tạo chưa, nếu tạo rồi thì delete
+		#và trả về null để tạo nút mới khi click
+		unequip_button.queue_free()
+		unequip_button = null
+		
 	if equipped["weapon"] == null:
-		equipped["weapon"] = {"id": inventory_index_id, "item_type": inventory_index["item_type"], "bonus_damage": Itemdatabase.items[inventory_index_id]["bonus_damage"]}
-		weapon_icon.texture = Itemdatabase.items[inventory_index_id]["icon"]
-		remove_item(inventory[index]["id"], 1)
-		equip_button.queue_free()
-	else:
-		var old_weapon_id = equipped["weapon"]["id"]
-		equipped["weapon"] = {"id": inventory_index_id, "item_type": inventory_index["item_type"], "bonus_damage": Itemdatabase.items[inventory_index_id]["bonus_damage"]}
-		weapon_icon.texture = Itemdatabase.items[inventory_index_id]["icon"]
-		add_item(old_weapon_id)
-		remove_item(inventory[index]["id"], 1)
-		equip_button.queue_free()
+		return
+	if equipped["weapon"] != null:
+		unequip_button = TextureButton.new()
+		weapon_slot.add_child(unequip_button)
+		unequip_button.texture_normal = button_img
+		unequip_button.texture_hover = button_img
+		unequip_button.texture_pressed = button_img
+		unequip_button.ignore_texture_size = true
+		unequip_button.stretch_mode = TextureButton.STRETCH_SCALE
+		unequip_button.custom_minimum_size = Vector2(100,25)
+		unequip_button.position = Vector2(65,0)
+		unequip_button.pressed.connect(func():
+			unequip())
+	
+		var unequip_text = Label.new()
+		unequip_button.add_child(unequip_text)
+		unequip_text.text = "Unequip"
+		unequip_text.size = Vector2(100, 25)
+		unequip_text.position = Vector2(0, 0)
+		unequip_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		unequip_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+
+func unequip():
+	if equipped["weapon"] == null:
+		return
+	if equipped["weapon"] != null:
+		var old_weapon_bonus_damage = equipped["weapon"]["bonus_damage"]
+		bonus_damage.emit(-old_weapon_bonus_damage)
+		add_item(equipped["weapon"]["id"])
+		equipped["weapon"] = null
+		weapon_icon.texture = null
+		unequip_button.queue_free()

@@ -5,6 +5,7 @@ var items = {
 		"name": "Slime Ball",
 		"description": "",
 		"stackable": true,
+		"wearable": false,
 		"icon": preload("res://assets/Slime_ball.png"),
 		"sell_price": 5,
 		"item_type": "item"
@@ -13,6 +14,7 @@ var items = {
 		"name": "Bat Wing",
 		"description": "",
 		"stackable": true,
+		"wearable": false,
 		"icon": preload("res://assets/bat_wing.png"),
 		"sell_price": 15,
 		"item_type": "item"
@@ -21,6 +23,7 @@ var items = {
 		"name": "Wooden Sword",
 		"description": "",
 		"stackable": false,
+		"wearable": true,
 		"icon": preload("res://assets/wooden_sword.png"),
 		"sell_price": 50,
 		"bonus_damage": 5,

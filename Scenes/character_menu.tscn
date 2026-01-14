@@ -978,7 +978,7 @@ offset_bottom = 526.0
 theme_override_font_sizes/font_size = 50
 text = "Gold:"
 
-[node name="Weapon" type="TextureButton" parent="."]
+[node name="Weapon_slot" type="TextureButton" parent="."]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(50, 70)
 layout_mode = 0
@@ -990,7 +990,7 @@ texture_normal = ExtResource("8_j2hbr")
 ignore_texture_size = true
 stretch_mode = 0
 
-[node name="Weapon_icon" type="TextureRect" parent="Weapon"]
+[node name="Weapon_icon" type="TextureRect" parent="Weapon_slot"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 1

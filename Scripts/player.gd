@@ -26,6 +26,9 @@ func set_health(current_health):
 func take_damage(amount):
 	set_health(health - amount)
 
+func bonus_damage(amount):
+	damage += amount
+
 func gain_xp(amount): #kết nối
 	current_xp += amount
 	level_up()

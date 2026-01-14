@@ -120,3 +120,4 @@ func connect_setup():
 		character_menu.update_health_ui(hp, max_hp)
 		character_menu.update_level(level))
 	guild_menu.quest_completed.connect(character_menu.remove_item)
+	character_menu.bonus_damage.connect(player.bonus_damage)
