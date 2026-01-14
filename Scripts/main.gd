@@ -37,6 +37,8 @@ func menu_setup():
 	character_menu.visible = true
 	character_menu.update_health_ui(player.health, player.max_health)
 	character_menu.update_level(player.current_level)
+	for i in range(3):
+		character_menu.add_item("wooden_sword")
 	
 func button_setup():
 	mine.pivot_offset = mine.size/2

@@ -48,7 +48,8 @@ func random_enemy():
 			return key
 
 func set_enemy():
-	enemy_index = random_enemy()
+	enemy_index = random_enemy() 
+	#gán chỉ số index trong random enemy vào enemy index
 	enemy_name.text = enemy_list[enemy_index]["name"]
 	enemy_texture.texture = enemy_list[enemy_index]["texture"]
 	enemy_damage = enemy_list[enemy_index]["damage"]
@@ -73,3 +74,4 @@ func play_death_effect():
 
 func loot():
 	character_menu.add_item(enemy_list[enemy_index]["loot"])
+	#Tự động chuyển dữ liệu item loot được sang inventory của player luôn.

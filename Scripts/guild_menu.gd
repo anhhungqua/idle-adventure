@@ -103,6 +103,10 @@ func on_accept_pressed():
 	submit.visible = true
 
 func quest_item_progress():
+	#tạo item_count từ 0, với mỗi slot trong inventory nếu không null và
+	#item đó có cùng id với quest id thì gán amount của item đó bằng item count
+	#lặp lại đến hết inventory sẽ ra được tồng số item quest yêu cầu mà inventory đang có.
+	#return để lấy giá trị của item_count dùng lại cho các code khác
 	var item_count := 0
 	for slot in range(character_menu.inventory.size()):
 		if character_menu.inventory[slot] != null and character_menu.inventory[slot]["id"] == current_quest["item_key"]:
@@ -110,6 +114,11 @@ func quest_item_progress():
 	return item_count
 
 func on_submit_pressed():
+	#dùng lại số ở trên để check số lượng item trong inventory bằng với số lượng item quest yêu cầu không
+	#nếu số lượng item trong inventory lớn hơn hoặc bằng thì sẽ emit cái signal chứa 2 tham số là item key
+	#và quantity rồi lấy main kết nối với remove_item bên inventory để trừ số lượng item quest yêu cầu
+	#đồng thời add gold reward trong character menu luon
+	#sau đó thay đổi index của quest để lượt sau khi bấm vào quest thì ra quest mới.
 	var item_count = quest_item_progress()
 	if item_count >= current_quest["quantity"]:
 		quest_completed.emit(current_quest["item_key"], current_quest["quantity"])

@@ -28,7 +28,7 @@ func _ready():
 	menu_setup()
 	button_setup()
 
-func hide_all():
+func hide_all(): 
 	explore_background.visible = false
 	battle_forest_bg.visible = false
 	player.visible = false
@@ -39,6 +39,8 @@ func hide_all():
 	forward.visible = false
 
 func menu_setup():
+	#có gọi lại khi nhấn vào retreat trả về menu explore
+	#nên dòng if đó sẽ được gọi khi bấm vào retreat
 	explore_background.visible = true
 	if player.health <= 0:
 		fight_button.disabled = true
@@ -52,6 +54,7 @@ func button_setup():
 	fight_button.button_up.connect(func():
 		fight_button.scale = Vector2(1.0, 1.0))
 	fight_button.pressed.connect(func():
+		#disable có chủ đích, khi explore thì không tự nhiên đào khoáng gì đc
 		prepare_combat()
 		start_combat()
 		disable_buttons())
@@ -62,6 +65,8 @@ func button_setup():
 	retreat.button_up.connect(func():
 		retreat.scale = Vector2(1.0,1.0))
 	retreat.pressed.connect(func():
+		#kết nối với menu setup để check hp của player ngăn
+		#không cho player vào chiến đấu nếu hp = 0
 		hide_all()
 		menu_setup()
 		enable_buttons())
@@ -72,6 +77,7 @@ func button_setup():
 	forward.button_up.connect(func():
 		forward.scale = Vector2(1.0,1.0))
 	forward.pressed.connect(func():
+		#bấm tiếp tục thì tiếp tục combat
 		prepare_combat()
 		start_combat())
 
@@ -85,25 +91,6 @@ func enable_buttons():
 	lumber.disabled = false
 	guild.disabled = false
 		
-func battle_end():
-	black_fade.visible = true
-	winloseboard.visible = true
-	retreat.visible = true
-	forward.visible = true
-	if victory:
-		winloseboard.texture = victory_board
-		forward.visible = true
-		enemy.loot()
-	else:
-		winloseboard.texture = defeat_board
-		forward.visible = false
-	
-	winloseboard.pivot_offset = winloseboard.size/2
-	winloseboard.scale = Vector2(0,0)
-	winlose_tween = create_tween()
-	winlose_tween.set_trans(Tween.TRANS_QUART)
-	winlose_tween.set_ease(Tween.EASE_OUT)
-	winlose_tween.tween_property(winloseboard, "scale", Vector2(1.0,1.0), 1)
 
 func prepare_combat():
 	hide_all()
@@ -123,15 +110,20 @@ func start_combat():
 			#PLAYER TURN
 			player_turn = true
 			enemy.take_damage(player.damage)
+			
 			if enemy.health <= 0:
+				#check nếu enemy chết
 				is_fighting = false
 				await enemy.play_death_effect()
 				enemy.visible = false
 				victory = true
 				player.gain_xp(enemy.enemy_xp)
 				await battle_end()
-				break
-			await get_tree().create_timer(1.0).timeout
+				break #thoát khỏi loop ngay lập tức khi enemy chết
+				
+			await get_tree().create_timer(1.0).timeout 
+			#sau khi enemy nhận damage thì tạo một timer 1s, đợi hết 1 giây rồi thì tiếp tục tới lượt enemy
+			
 			#ENEMY TURN
 			player_turn = false
 			enemy_turn = true
@@ -145,3 +137,25 @@ func start_combat():
 			await get_tree().create_timer(1.0).timeout
 	else:
 		is_fighting = false
+
+func battle_end(): 
+	#hiện màn hình thông báo sau khi chiến thắng hoặc thua cuộc
+	#hiện nút retreat hoặc forward
+	black_fade.visible = true
+	winloseboard.visible = true
+	retreat.visible = true
+	forward.visible = true
+	if victory:
+		winloseboard.texture = victory_board
+		forward.visible = true
+		enemy.loot()
+	else:
+		winloseboard.texture = defeat_board
+		forward.visible = false
+	
+	winloseboard.pivot_offset = winloseboard.size/2
+	winloseboard.scale = Vector2(0,0)
+	winlose_tween = create_tween()
+	winlose_tween.set_trans(Tween.TRANS_QUART)
+	winlose_tween.set_ease(Tween.EASE_OUT)
+	winlose_tween.tween_property(winloseboard, "scale", Vector2(1.0,1.0), 1)
