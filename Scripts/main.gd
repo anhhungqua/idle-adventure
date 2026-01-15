@@ -39,6 +39,7 @@ func menu_setup():
 	character_menu.update_level(player.current_level)
 	for i in range(3):
 		character_menu.add_item("wooden_sword")
+		character_menu.add_item("slime_ball")
 	
 func button_setup():
 	mine.pivot_offset = mine.size/2

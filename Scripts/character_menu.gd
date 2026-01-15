@@ -1,5 +1,5 @@
 extends Control
-
+@export var guild_menu : Control
 @onready var texture_progress_bar: TextureProgressBar = %TextureProgressBar
 @onready var healthtext: Label = %healthtext
 @onready var level: Label = $Level
@@ -78,12 +78,14 @@ func add_item(item_key):
 				if inventory[b]["id"] == item_key:
 					inventory[b]["amount"] += 1
 					update_ui_slot(b)
+					guild_menu.inventory_update_ui_slot()
 					return
 
 	for a in range(inventory.size()): #Check slot trống để tạo item mới
 		if inventory[a] == null:
 			inventory[a] = {"id": item_key, "amount": 1, "item_type": Itemdatabase.items[item_key]["item_type"], "wearable": Itemdatabase.items[item_key]["wearable"]}
 			update_ui_slot(a)
+			guild_menu.inventory_update_ui_slot()
 			return
 			
 func update_ui_slot(index):
@@ -108,12 +110,14 @@ func remove_item(item_key, amount):
 					inventory[c]["amount"] -= amount
 					amount = 0
 					update_ui_slot(c)
+					guild_menu.inventory_update_ui_slot()
 					return
 					#nếu trừ hết thì return ngay khúc này.
 				else:
 					amount -= inventory[c]["amount"]
 					inventory[c] = null
 					update_ui_slot(c)
+					guild_menu.inventory_update_ui_slot()
 					#nếu chưa trừ hết thì lặp lại từ đầu check ở ô tiếp theo vì amount lúc này chưa bằng 0
 
 func add_gold(amount):
@@ -135,7 +139,7 @@ func click_items(index):
 		equip_button.queue_free()
 		equip_button = null
 		
-	if inventory[index] == null: #check koi nút click trong inventory có data không
+	if inventory[index] == null: #check koi nút click index đó trong inventory index có data không
 		return
 
 	if inventory[index] != null: #check koi item trong data đó có phải weapon không
@@ -147,15 +151,14 @@ func click_items(index):
 			equip_button.texture_pressed = button_img
 			equip_button.ignore_texture_size = true
 			equip_button.stretch_mode = TextureButton.STRETCH_SCALE
-			equip_button.custom_minimum_size = Vector2(100,25)
-			equip_button.position = Vector2(-50,50)
+			equip_button.custom_minimum_size = Vector2(70,25)
 			equip_button.pressed.connect(func():
 				equip(index))
 			
 			var equip_text = Label.new()
 			equip_button.add_child(equip_text)
 			equip_text.text = "Equip"
-			equip_text.size = Vector2(100, 25)
+			equip_text.size = Vector2(70, 25)
 			equip_text.position = Vector2(0, 0)
 			equip_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			equip_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER

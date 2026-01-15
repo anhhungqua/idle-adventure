@@ -12,7 +12,13 @@ extends Control
 @onready var accept: TextureButton = %Accept
 @onready var submit: TextureButton = %Submit
 @onready var reward: RichTextLabel = %REWARD
-
+@onready var shop: TextureButton = %Shop
+@onready var shop_menu: Control = $Shop_menu
+@onready var grid_container_inventory: GridContainer = %GridContainerInventory
+@onready var grid_container_shop: GridContainer = %GridContainerShop
+@onready var shop_button: TextureButton = %shop_button
+@onready var buyback_button: TextureButton = %buyback_button
+@onready var shop_inventory_node: ScrollContainer = %Shop_inventory_node
 
 var quests = {
 	"quest_01":{
@@ -39,12 +45,38 @@ signal quest_completed(item_key, amount)
 
 var not_enough_money_tween: Tween
 
+var inventory_ui_slots = []
+var sell_button : TextureButton
+var buysell_button = preload("res://assets/Button.png")
+var shop_inventory = []
+var shop_ui_slots = []
+var buy_button : TextureButton
+
+
 func _ready():
 	setup_menu()
 	setup_buttons()
 	
-func setup_menu():
+func hide_all():
 	quest_bg.visible = false
+	shop_menu.visible = false
+	
+func setup_menu():
+	hide_all()
+	setup_inventory()
+
+func setup_inventory():
+	inventory_ui_slots = grid_container_inventory.get_children()
+	for i in range(inventory_ui_slots.size()):
+		inventory_ui_slots[i].pressed.connect(func():
+			click_invenntory(i))
+	shop_ui_slots = grid_container_shop.get_children()
+	for i in range(shop_ui_slots.size()):
+		shop_ui_slots[i].pressed.connect(func():
+			click_shop(i))
+	shop_inventory.resize(20)
+	shop_inventory.fill(null)
+	shop_inventory[0] = "wooden_sword"
 
 func setup_buttons():
 	rest.pivot_offset = rest.size/2
@@ -61,6 +93,7 @@ func setup_buttons():
 	quest.button_up.connect(func():
 		quest.scale = Vector2(1.0,1.0))
 	quest.pressed.connect(func():
+		hide_all()
 		on_quest_pressed())
 	
 	close.pivot_offset = close.size/2
@@ -86,7 +119,34 @@ func setup_buttons():
 		submit.scale = Vector2(1.0,1.0))
 	submit.pressed.connect(func():
 		on_submit_pressed())
-
+	
+	shop.pivot_offset = shop.size/2
+	shop.button_down.connect(func():
+		shop.scale = Vector2(0.9,0.9))
+	shop.button_up.connect(func():
+		shop.scale = Vector2(1.0,1.0))
+	shop.pressed.connect(func():
+		hide_all()
+		shop_menu.visible = true
+		inventory_update_ui_slot()
+		shop_update_ui_slot())
+	
+	shop_button.pivot_offset = shop_button.size/2
+	shop_button.button_down.connect(func():
+		shop_button.scale = Vector2(0.9,0.9))
+	shop_button.button_up.connect(func():
+		shop_button.scale = Vector2(1.0,1.0))
+	shop_button.pressed.connect(func():
+		shop_inventory_node.visible = true)
+		
+	buyback_button.pivot_offset = buyback_button.size/2
+	buyback_button.button_down.connect(func():
+		buyback_button.scale = Vector2(0.9,0.9))
+	buyback_button.button_up.connect(func():
+		buyback_button.scale = Vector2(1.0,1.0))
+	buyback_button.pressed.connect(func():
+		shop_inventory_node.visible = false)
+	
 func on_quest_pressed():
 	quest_name.text = current_quest["name"]
 	quest_des.text = current_quest["description"]
@@ -145,3 +205,88 @@ func resting(cost):
 		not_enough_money_tween.tween_property(not_enough_money, "position:y", 553, 2)
 		not_enough_money_tween.tween_property(not_enough_money, "modulate:a", 0, 2)
 		not_enough_money_tween.finished.connect(not_enough_money.queue_free)
+
+func inventory_update_ui_slot():
+	for i in range(character_menu.inventory.size()):
+		if character_menu.inventory[i] != null:
+			var character_menu_id =  character_menu.inventory[i]["id"]
+			inventory_ui_slots[i].get_node("Icon").texture = Itemdatabase.items[character_menu_id]["icon"]
+			inventory_ui_slots[i].get_node("Count").text = str(character_menu.inventory[i]["amount"])
+		else:
+			inventory_ui_slots[i].get_node("Icon").texture = null
+			inventory_ui_slots[i].get_node("Count").text = ""
+
+func shop_update_ui_slot():
+	for i in range(shop_inventory.size()):
+		if shop_inventory[i] != null:
+			shop_ui_slots[i].get_node("Icon").texture = Itemdatabase.items[shop_inventory[i]]["icon"]
+		else:
+			shop_ui_slots[i].get_node("Icon").texture = null
+
+func click_invenntory(i):
+	if sell_button != null:
+		sell_button.queue_free()
+		sell_button = null
+	if character_menu.inventory[i] == null:
+		return
+	else:
+		sell_button = TextureButton.new()
+		inventory_ui_slots[i].add_child(sell_button)
+		sell_button.texture_normal = buysell_button
+		sell_button.texture_pressed = buysell_button
+		sell_button.texture_hover = buysell_button
+		sell_button.ignore_texture_size = true
+		sell_button.stretch_mode = TextureButton.STRETCH_SCALE
+		sell_button.custom_minimum_size = Vector2(70,25)
+		sell_button.pressed.connect(func():
+			pass)
+		var sell_button_text = Label.new()
+		sell_button.add_child(sell_button_text)
+		sell_button_text.text = "Sell"
+		sell_button_text.size = Vector2(70, 25)
+		sell_button_text.position = Vector2(0, 0)
+		sell_button_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		sell_button_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+
+func click_shop(i):
+	if buy_button != null:
+		buy_button.queue_free()
+		buy_button = null
+	if shop_inventory[i] == null:
+		return
+	else:
+		buy_button = TextureButton.new()
+		shop_ui_slots[i].add_child(buy_button)
+		buy_button.texture_normal = buysell_button
+		buy_button.texture_pressed = buysell_button
+		buy_button.texture_hover = buysell_button
+		buy_button.ignore_texture_size = true
+		buy_button.stretch_mode = TextureButton.STRETCH_SCALE
+		buy_button.custom_minimum_size = Vector2(70,25)
+		buy_button.pressed.connect(func():
+			buying(i))
+		var buy_button_text = Label.new()
+		buy_button.add_child(buy_button_text)
+		buy_button_text.text = "Buy"
+		buy_button_text.size = Vector2(70, 25)
+		buy_button_text.position = Vector2(0, 0)
+		buy_button_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		buy_button_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+
+func buying(i):
+	if character_menu.current_gold >= Itemdatabase.items[shop_inventory[i]]["buy_price"]:
+		character_menu.add_item(shop_inventory[i])
+		character_menu.spend_gold(Itemdatabase.items[shop_inventory[i]]["buy_price"])
+	else:
+		var not_enough_money = Label.new()
+		add_child(not_enough_money)
+		not_enough_money.position = Vector2(20,593)
+		not_enough_money.text = "Not Enough Gold"
+		not_enough_money_tween = create_tween()
+		not_enough_money_tween.set_parallel()
+		not_enough_money_tween.tween_property(not_enough_money, "position:y", 553, 2)
+		not_enough_money_tween.tween_property(not_enough_money, "modulate:a", 0, 2)
+		not_enough_money_tween.finished.connect(not_enough_money.queue_free)
+
+func selling(i):
+	pass

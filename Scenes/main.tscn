@@ -39,9 +39,10 @@ unique_name_in_owner = true
 player = NodePath("../Battle Menu/Player")
 character_menu = NodePath("../CharacterMenu")
 
-[node name="CharacterMenu" parent="CanvasLayer" instance=ExtResource("6_344ge")]
+[node name="CharacterMenu" parent="CanvasLayer" node_paths=PackedStringArray("guild_menu") instance=ExtResource("6_344ge")]
 unique_name_in_owner = true
 visible = false
+guild_menu = NodePath("../Guild Menu")
 
 [node name="Battle Menu" type="Control" parent="CanvasLayer"]
 unique_name_in_owner = true

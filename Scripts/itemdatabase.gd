@@ -8,6 +8,7 @@ var items = {
 		"wearable": false,
 		"icon": preload("res://assets/Slime_ball.png"),
 		"sell_price": 5,
+		"buy_price": 15,
 		"item_type": "item"
 	},
 	"bat_wing":{
@@ -17,6 +18,7 @@ var items = {
 		"wearable": false,
 		"icon": preload("res://assets/bat_wing.png"),
 		"sell_price": 15,
+		"buy_price": 30,
 		"item_type": "item"
 	},
 	"wooden_sword":{
@@ -25,7 +27,8 @@ var items = {
 		"stackable": false,
 		"wearable": true,
 		"icon": preload("res://assets/wooden_sword.png"),
-		"sell_price": 50,
+		"sell_price": 30,
+		"buy_price": 100,
 		"bonus_damage": 5,
 		"item_type": "weapon"
 	}
