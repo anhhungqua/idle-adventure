@@ -83,7 +83,7 @@ func add_item(item_key):
 
 	for a in range(inventory.size()): #Check slot trống để tạo item mới
 		if inventory[a] == null:
-			inventory[a] = {"id": item_key, "amount": 1, "item_type": Itemdatabase.items[item_key]["item_type"], "wearable": Itemdatabase.items[item_key]["wearable"]}
+			inventory[a] = {"id": item_key, "amount": 1, "item_type": Itemdatabase.items[item_key]["item_type"], "wearable": Itemdatabase.items[item_key]["wearable"], "sell_price": Itemdatabase.items[item_key]["sell_price"], "stackable": Itemdatabase.items[item_key]["stackable"]}
 			update_ui_slot(a)
 			guild_menu.inventory_update_ui_slot()
 			return

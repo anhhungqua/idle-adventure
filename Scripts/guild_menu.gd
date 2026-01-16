@@ -19,7 +19,11 @@ extends Control
 @onready var shop_button: TextureButton = %shop_button
 @onready var buyback_button: TextureButton = %buyback_button
 @onready var shop_inventory_node: ScrollContainer = %Shop_inventory_node
+@onready var buyback_inventory_node: ScrollContainer = %buyback_inventory_node
+@onready var grid_containerbuyback: GridContainer = %GridContainerbuyback
 
+
+# ========== QUEST SYSTEM ==========
 var quests = {
 	"quest_01":{
 		"name": "Slime Hunt",
@@ -42,17 +46,21 @@ var quest_taken = false
 var quest_index := 0
 var current_quest = quests[quests.keys()[quest_index]]
 signal quest_completed(item_key, amount)
-
+# ========== SHOP SYSTEM ==========
 var not_enough_money_tween: Tween
-
+var btn_texture = preload("res://assets/Button.png")
 var inventory_ui_slots = []
-var sell_button : TextureButton
-var buysell_button = preload("res://assets/Button.png")
+var player_sell_btn : TextureButton
+# ========== SHOP INVENTORY ==========
 var shop_inventory = []
 var shop_ui_slots = []
-var buy_button : TextureButton
+var shop_buy_btn : TextureButton
+# ========== BUYBACK INVENTORY ==========
+var buyback_inventory = []
+var buyback_ui_slots = []
+var buyback_buy_btn: TextureButton
 
-
+# ========== SETUP ==========
 func _ready():
 	setup_menu()
 	setup_buttons()
@@ -60,6 +68,7 @@ func _ready():
 func hide_all():
 	quest_bg.visible = false
 	shop_menu.visible = false
+	buyback_inventory_node.visible = false
 	
 func setup_menu():
 	hide_all()
@@ -77,6 +86,12 @@ func setup_inventory():
 	shop_inventory.resize(20)
 	shop_inventory.fill(null)
 	shop_inventory[0] = "wooden_sword"
+	buyback_inventory.resize(20)
+	buyback_inventory.fill(null)
+	buyback_ui_slots = grid_containerbuyback.get_children()
+	for i in range(buyback_ui_slots.size()):
+		buyback_ui_slots[i].pressed.connect(func():
+			click_buyback(i))
 
 func setup_buttons():
 	rest.pivot_offset = rest.size/2
@@ -137,7 +152,8 @@ func setup_buttons():
 	shop_button.button_up.connect(func():
 		shop_button.scale = Vector2(1.0,1.0))
 	shop_button.pressed.connect(func():
-		shop_inventory_node.visible = true)
+		shop_inventory_node.visible = true
+		buyback_inventory_node.visible = false)
 		
 	buyback_button.pivot_offset = buyback_button.size/2
 	buyback_button.button_down.connect(func():
@@ -145,8 +161,10 @@ func setup_buttons():
 	buyback_button.button_up.connect(func():
 		buyback_button.scale = Vector2(1.0,1.0))
 	buyback_button.pressed.connect(func():
-		shop_inventory_node.visible = false)
-	
+		shop_inventory_node.visible = false
+		buyback_inventory_node.visible = true)
+		
+# ========== QUEST FUNCTIONS ==========
 func on_quest_pressed():
 	quest_name.text = current_quest["name"]
 	quest_des.text = current_quest["description"]
@@ -190,7 +208,8 @@ func on_submit_pressed():
 			quest.disabled = true
 		else:
 			current_quest = quests[quests.keys()[quest_index]]
-
+			
+# ========== GUILD FUNCTIONS ==========
 func resting(cost):
 	if character_menu.current_gold >= cost:
 		character_menu.spend_gold(cost)
@@ -206,6 +225,7 @@ func resting(cost):
 		not_enough_money_tween.tween_property(not_enough_money, "modulate:a", 0, 2)
 		not_enough_money_tween.finished.connect(not_enough_money.queue_free)
 
+# ========== PLAYER INVENTORY (in shop) ==========
 func inventory_update_ui_slot():
 	for i in range(character_menu.inventory.size()):
 		if character_menu.inventory[i] != null:
@@ -216,6 +236,69 @@ func inventory_update_ui_slot():
 			inventory_ui_slots[i].get_node("Icon").texture = null
 			inventory_ui_slots[i].get_node("Count").text = ""
 
+func click_invenntory(i):
+	if player_sell_btn != null:
+		player_sell_btn.queue_free()
+		player_sell_btn = null
+	if character_menu.inventory[i] == null:
+		return
+	else:
+		player_sell_btn = TextureButton.new()
+		inventory_ui_slots[i].add_child(player_sell_btn)
+		player_sell_btn.texture_normal = btn_texture
+		player_sell_btn.texture_pressed = btn_texture
+		player_sell_btn.texture_hover = btn_texture
+		player_sell_btn.ignore_texture_size = true
+		player_sell_btn.stretch_mode = TextureButton.STRETCH_SCALE
+		player_sell_btn.custom_minimum_size = Vector2(70,25)
+		player_sell_btn.pressed.connect(func():
+			selling(i)
+			player_sell_btn.queue_free())
+		var sell_button_text = Label.new()
+		player_sell_btn.add_child(sell_button_text)
+		sell_button_text.text = "Sell"
+		sell_button_text.size = Vector2(70, 25)
+		sell_button_text.position = Vector2(0, 0)
+		sell_button_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		sell_button_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+
+func selling(i):
+	#check nếu item trong inventory bên character_menu có stackable hay không
+	#nếu có thì check nếu buyback không trống thì cộng amount dựa trên id
+	#update buybackui, add_gold/remove_item (đã bao gồm update bên inventory bên character, update inventory bên đây
+	#nếu không stackable thì check xin slot nào trống thì thêm item vào dựa trên id
+	#cũng update ui buyback, addgold/remove_item, và update inventory bên đây
+	if character_menu.inventory[i]["stackable"] == true:
+		for a in range(buyback_inventory.size()):
+			if buyback_inventory[a] != null:
+				if buyback_inventory[a]["id"] == character_menu.inventory[i]["id"]:
+					buyback_inventory[a]["amount"] += 1
+					update_buyback_ui_slots(a)
+					character_menu.add_gold(character_menu.inventory[i]["sell_price"])
+					character_menu.remove_item(character_menu.inventory[i]["id"], 1)
+					inventory_update_ui_slot()
+					return
+					
+	if buyback_inventory[19] != null: 
+		#FIFO, check nếu slot cuối có item không, nếu có thì thực hiện cộng dồn
+		#sở dĩ để size-1 vì nếu khi cộng dồn 19+1=20, 20 không có dữ liệu sẽ crash
+		#cho nên 18+1=19 là tới slot cuối cùng r.
+		for c in range(buyback_inventory.size()-1):
+			buyback_inventory[c] = buyback_inventory[c+1]
+		buyback_inventory[19] = null
+		for k in range(buyback_inventory.size()):
+			update_buyback_ui_slots(k)
+		
+	for b in range(buyback_inventory.size()):
+		if buyback_inventory[b] == null:
+			buyback_inventory[b] = {"id": character_menu.inventory[i]["id"], "amount": 1}
+			update_buyback_ui_slots(b)
+			character_menu.add_gold(character_menu.inventory[i]["sell_price"])
+			character_menu.remove_item(character_menu.inventory[i]["id"], 1)
+			inventory_update_ui_slot()
+			return
+
+# ========== SHOP TAB ==========
 func shop_update_ui_slot():
 	for i in range(shop_inventory.size()):
 		if shop_inventory[i] != null:
@@ -223,50 +306,26 @@ func shop_update_ui_slot():
 		else:
 			shop_ui_slots[i].get_node("Icon").texture = null
 
-func click_invenntory(i):
-	if sell_button != null:
-		sell_button.queue_free()
-		sell_button = null
-	if character_menu.inventory[i] == null:
-		return
-	else:
-		sell_button = TextureButton.new()
-		inventory_ui_slots[i].add_child(sell_button)
-		sell_button.texture_normal = buysell_button
-		sell_button.texture_pressed = buysell_button
-		sell_button.texture_hover = buysell_button
-		sell_button.ignore_texture_size = true
-		sell_button.stretch_mode = TextureButton.STRETCH_SCALE
-		sell_button.custom_minimum_size = Vector2(70,25)
-		sell_button.pressed.connect(func():
-			pass)
-		var sell_button_text = Label.new()
-		sell_button.add_child(sell_button_text)
-		sell_button_text.text = "Sell"
-		sell_button_text.size = Vector2(70, 25)
-		sell_button_text.position = Vector2(0, 0)
-		sell_button_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		sell_button_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-
 func click_shop(i):
-	if buy_button != null:
-		buy_button.queue_free()
-		buy_button = null
+	if shop_buy_btn != null:
+		shop_buy_btn.queue_free()
+		shop_buy_btn = null
 	if shop_inventory[i] == null:
 		return
 	else:
-		buy_button = TextureButton.new()
-		shop_ui_slots[i].add_child(buy_button)
-		buy_button.texture_normal = buysell_button
-		buy_button.texture_pressed = buysell_button
-		buy_button.texture_hover = buysell_button
-		buy_button.ignore_texture_size = true
-		buy_button.stretch_mode = TextureButton.STRETCH_SCALE
-		buy_button.custom_minimum_size = Vector2(70,25)
-		buy_button.pressed.connect(func():
-			buying(i))
+		shop_buy_btn = TextureButton.new()
+		shop_ui_slots[i].add_child(shop_buy_btn)
+		shop_buy_btn.texture_normal = btn_texture
+		shop_buy_btn.texture_pressed = btn_texture
+		shop_buy_btn.texture_hover = btn_texture
+		shop_buy_btn.ignore_texture_size = true
+		shop_buy_btn.stretch_mode = TextureButton.STRETCH_SCALE
+		shop_buy_btn.custom_minimum_size = Vector2(70,25)
+		shop_buy_btn.pressed.connect(func():
+			buying(i)
+			shop_buy_btn.queue_free())
 		var buy_button_text = Label.new()
-		buy_button.add_child(buy_button_text)
+		shop_buy_btn.add_child(buy_button_text)
 		buy_button_text.text = "Buy"
 		buy_button_text.size = Vector2(70, 25)
 		buy_button_text.position = Vector2(0, 0)
@@ -288,5 +347,59 @@ func buying(i):
 		not_enough_money_tween.tween_property(not_enough_money, "modulate:a", 0, 2)
 		not_enough_money_tween.finished.connect(not_enough_money.queue_free)
 
-func selling(i):
-	pass
+# ========== BUYBACK TAB ==========
+func update_buyback_ui_slots(index):
+	 #phải check null trước mới gán không thôi cái slot null thì gán vào sẽ crash.
+		if buyback_inventory[index] != null:
+			var buyback_inventory_id = buyback_inventory[index]["id"]
+			buyback_ui_slots[index].get_node("Icon").texture = Itemdatabase.items[buyback_inventory_id]["icon"]
+			buyback_ui_slots[index].get_node("Label").text = str(buyback_inventory[index]["amount"])
+		else:
+			buyback_ui_slots[index].get_node("Icon").texture = null
+			buyback_ui_slots[index].get_node("Label").text = ""
+
+func click_buyback(i):
+	if buyback_buy_btn != null:
+		buyback_buy_btn.queue_free()
+		buyback_buy_btn = null
+	if buyback_inventory[i] == null:
+		return
+	else:
+		buyback_buy_btn = TextureButton.new()
+		buyback_ui_slots[i].add_child(buyback_buy_btn)
+		buyback_buy_btn.texture_normal = btn_texture
+		buyback_buy_btn.texture_pressed = btn_texture
+		buyback_buy_btn.texture_hover = btn_texture
+		buyback_buy_btn.ignore_texture_size = true
+		buyback_buy_btn.stretch_mode = TextureButton.STRETCH_SCALE
+		buyback_buy_btn.custom_minimum_size = Vector2(70,25)
+		buyback_buy_btn.pressed.connect(func():
+			buyback(i)
+			buyback_buy_btn.queue_free())
+		var buyback_button_slot_text = Label.new()
+		buyback_buy_btn.add_child(buyback_button_slot_text)
+		buyback_button_slot_text.text = "Buy"
+		buyback_button_slot_text.size = Vector2(70, 25)
+		buyback_button_slot_text.position = Vector2(0, 0)
+		buyback_button_slot_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		buyback_button_slot_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+
+func buyback(i):
+	var key_id = buyback_inventory[i]["id"]
+	if character_menu.current_gold >= Itemdatabase.items[key_id]["buy_price"]:
+		character_menu.add_item(key_id)
+		character_menu.spend_gold(Itemdatabase.items[key_id]["buy_price"])
+		buyback_inventory[i]["amount"] -= 1
+		if buyback_inventory[i]["amount"] == 0:
+			buyback_inventory[i] = null
+		update_buyback_ui_slots(i)
+	else:
+		var not_enough_money = Label.new()
+		add_child(not_enough_money)
+		not_enough_money.position = Vector2(20,593)
+		not_enough_money.text = "Not Enough Gold"
+		not_enough_money_tween = create_tween()
+		not_enough_money_tween.set_parallel()
+		not_enough_money_tween.tween_property(not_enough_money, "position:y", 553, 2)
+		not_enough_money_tween.tween_property(not_enough_money, "modulate:a", 0, 2)
+		not_enough_money_tween.finished.connect(not_enough_money.queue_free)

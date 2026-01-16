@@ -37,7 +37,7 @@ func menu_setup():
 	character_menu.visible = true
 	character_menu.update_health_ui(player.health, player.max_health)
 	character_menu.update_level(player.current_level)
-	for i in range(3):
+	for i in range(19):
 		character_menu.add_item("wooden_sword")
 		character_menu.add_item("slime_ball")
 	
