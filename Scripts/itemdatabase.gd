@@ -31,5 +31,16 @@ var items = {
 		"buy_price": 100,
 		"bonus_damage": 5,
 		"item_type": "weapon"
+	},
+	"wooden_armor":{
+		"name": "Wooden Armor",
+		"description": "",
+		"stackable": false,
+		"wearable": true,
+		"icon": preload("res://assets/wooden_armor.png"),
+		"sell_price": 50,
+		"buy_price": 120,
+		"bonus_armor": 2,
+		"item_type": "armor"
 	}
 }

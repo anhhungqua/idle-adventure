@@ -37,9 +37,9 @@ func menu_setup():
 	character_menu.visible = true
 	character_menu.update_health_ui(player.health, player.max_health)
 	character_menu.update_level(player.current_level)
-	for i in range(19):
+	for i in range(3):
 		character_menu.add_item("wooden_sword")
-		character_menu.add_item("slime_ball")
+		character_menu.add_item("wooden_armor")
 	
 func button_setup():
 	mine.pivot_offset = mine.size/2
@@ -122,3 +122,4 @@ func connect_setup():
 		character_menu.update_level(level))
 	guild_menu.quest_completed.connect(character_menu.remove_item)
 	character_menu.bonus_damage.connect(player.bonus_damage)
+	character_menu.bonus_armor.connect(player.bonus_armor)

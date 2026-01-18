@@ -265,7 +265,7 @@ func click_invenntory(i):
 func selling(i):
 	#check nếu item trong inventory bên character_menu có stackable hay không
 	#nếu có thì check nếu buyback không trống thì cộng amount dựa trên id
-	#update buybackui, add_gold/remove_item (đã bao gồm update bên inventory bên character, update inventory bên đây
+	#update buybackui, add_gold/remove_item đã bao gồm update bên inventory bên character, update inventory bên đây
 	#nếu không stackable thì check xin slot nào trống thì thêm item vào dựa trên id
 	#cũng update ui buyback, addgold/remove_item, và update inventory bên đây
 	if character_menu.inventory[i]["stackable"] == true:

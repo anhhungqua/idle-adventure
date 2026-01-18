@@ -10,6 +10,7 @@ var current_xp := 0
 var level_up_require := 30
 var current_level := 1
 var damage := 5
+var armor := 0
 
 signal update_player_value(health, max_health, current_level)
 
@@ -24,11 +25,14 @@ func set_health(current_health):
 	update_player_value.emit(health, max_health, current_level)
 
 func take_damage(amount):
-	set_health(health - amount)
+	set_health(health - (amount-armor))
 
 func bonus_damage(amount):
 	damage += amount
 
+func bonus_armor(amount):
+	armor += amount
+	
 func gain_xp(amount): #kết nối
 	current_xp += amount
 	level_up()

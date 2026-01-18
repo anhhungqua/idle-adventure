@@ -9,7 +9,7 @@ extends Node2D
 var enemy_list: Array[Dictionary] = [{
 	"name": "Slime",
 	"hp": 20,
-	"damage": 2,
+	"damage": 5,
 	"xp": 10,
 	"texture": preload("res://assets/slime.png"),
 	"loot": "slime_ball",
@@ -17,7 +17,7 @@ var enemy_list: Array[Dictionary] = [{
 },{
 	"name": "Evil Bat",
 	"hp": 40,
-	"damage": 2,
+	"damage": 10,
 	"xp": 20,
 	"texture": preload("res://assets/doi quy.png"),
 	"loot": "bat_wing",
