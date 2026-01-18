@@ -140,6 +140,13 @@ func spend_gold(amount):
 func update_gold():
 	gold.text = "Gold:" + " " + str(current_gold)
 
+func count_items(item_key):
+	var item_count := 0
+	for i in inventory:
+		if i != null and i["id"] == item_key:
+			item_count += i["amount"]
+	return item_count
+
 func click_items(index):
 	if equip_button != null: 
 		#check koi khi click nút mới 

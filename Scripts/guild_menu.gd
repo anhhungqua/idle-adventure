@@ -21,7 +21,12 @@ extends Control
 @onready var shop_inventory_node: ScrollContainer = %Shop_inventory_node
 @onready var buyback_inventory_node: ScrollContainer = %buyback_inventory_node
 @onready var grid_containerbuyback: GridContainer = %GridContainerbuyback
-
+@onready var crafting_menu: Control = %Crafting_menu
+@onready var craft: TextureButton = %Craft
+@onready var result_slt: TextureButton = %Result_slt
+@onready var ing_slt_1: TextureButton = %ing_slt1
+@onready var ing_slt_2: TextureButton = %ing_slt2
+@onready var craft_btn: TextureButton = %craft_btn
 
 # ========== QUEST SYSTEM ==========
 var quests = {
@@ -59,7 +64,11 @@ var shop_buy_btn : TextureButton
 var buyback_inventory = []
 var buyback_ui_slots = []
 var buyback_buy_btn: TextureButton
-
+# ========== CRAFTING ==========
+var crafting_recipe_index := 0
+var crafting_recipe_id: String = Itemdatabase.blueprint.keys()[crafting_recipe_index]
+var ing_id_1: String = Itemdatabase.blueprint[crafting_recipe_id]["ingredients"].keys()[0]
+var ing_id_2: String = Itemdatabase.blueprint[crafting_recipe_id]["ingredients"].keys()[1]
 # ========== SETUP ==========
 func _ready():
 	setup_menu()
@@ -69,6 +78,7 @@ func hide_all():
 	quest_bg.visible = false
 	shop_menu.visible = false
 	buyback_inventory_node.visible = false
+	crafting_menu.visible = false
 	
 func setup_menu():
 	hide_all()
@@ -163,7 +173,24 @@ func setup_buttons():
 	buyback_button.pressed.connect(func():
 		shop_inventory_node.visible = false
 		buyback_inventory_node.visible = true)
-		
+	
+	craft.pivot_offset = craft.size/2
+	craft.button_down.connect(func():
+		craft.scale = Vector2(0.9,0.9))
+	craft.button_up.connect(func():
+		craft.scale = Vector2(1.0,1.0))
+	craft.pressed.connect(func():
+		hide_all()
+		crafting_menu.visible = true
+		setup_crafting())
+	
+	craft_btn.pivot_offset = craft_btn.size/2
+	craft_btn.button_down.connect(func():
+		craft_btn.scale = Vector2(0.9,0.9))
+	craft_btn.button_up.connect(func():
+		craft_btn.scale = Vector2(1.0,1.0))
+	craft_btn.pressed.connect(func():
+		crafting())
 # ========== QUEST FUNCTIONS ==========
 func on_quest_pressed():
 	quest_name.text = current_quest["name"]
@@ -403,3 +430,33 @@ func buyback(i):
 		not_enough_money_tween.tween_property(not_enough_money, "position:y", 553, 2)
 		not_enough_money_tween.tween_property(not_enough_money, "modulate:a", 0, 2)
 		not_enough_money_tween.finished.connect(not_enough_money.queue_free)
+
+func setup_crafting():
+	crafting_recipe_id = Itemdatabase.blueprint.keys()[crafting_recipe_index]
+	ing_id_1 = Itemdatabase.blueprint[crafting_recipe_id]["ingredients"].keys()[0]
+	ing_id_2 = Itemdatabase.blueprint[crafting_recipe_id]["ingredients"].keys()[1]
+	result_slt.get_node("Icon").texture = Itemdatabase.items[crafting_recipe_id]["icon"]
+	result_slt.get_node("Count").text = str(Itemdatabase.blueprint[crafting_recipe_id]["amount"])
+	ing_slt_1.get_node("Icon").texture = Itemdatabase.items[ing_id_1]["icon"]
+	ing_slt_1.get_node("Count").text = str(Itemdatabase.blueprint[crafting_recipe_id]["ingredients"][ing_id_1])
+	ing_slt_1.get_node("inv_count").text = "Have:" + "\n" + str(character_menu.count_items(ing_id_1))
+	ing_slt_2.get_node("Icon").texture = Itemdatabase.items[ing_id_2]["icon"]
+	ing_slt_2.get_node("Count").text = str(Itemdatabase.blueprint[crafting_recipe_id]["ingredients"][ing_id_2])
+	ing_slt_2.get_node("inv_count").text = "Have:" + "\n" + str(character_menu.count_items(ing_id_2))
+
+func crafting():
+	if character_menu.count_items(ing_id_1) >= Itemdatabase.blueprint[crafting_recipe_id]["ingredients"][ing_id_1] and character_menu.count_items(ing_id_2) >= Itemdatabase.blueprint[crafting_recipe_id]["ingredients"][ing_id_2]:
+		character_menu.add_item(crafting_recipe_id)
+		character_menu.remove_item(ing_id_1, Itemdatabase.blueprint[crafting_recipe_id]["ingredients"][ing_id_1])
+		character_menu.remove_item(ing_id_2, Itemdatabase.blueprint[crafting_recipe_id]["ingredients"][ing_id_2])
+		setup_crafting()
+	else:
+		var not_enough_material = Label.new()
+		add_child(not_enough_material)
+		not_enough_material.position = Vector2(20,593)
+		not_enough_material.text = "Not Enough Material"
+		not_enough_money_tween = create_tween()
+		not_enough_money_tween.set_parallel()
+		not_enough_money_tween.tween_property(not_enough_material, "position:y", 553, 2)
+		not_enough_money_tween.tween_property(not_enough_material, "modulate:a", 0, 2)
+		not_enough_money_tween.finished.connect(not_enough_material.queue_free)

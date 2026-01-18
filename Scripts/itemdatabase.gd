@@ -32,6 +32,17 @@ var items = {
 		"bonus_damage": 5,
 		"item_type": "weapon"
 	},
+	"slime_sword":{
+		"name": "Slime Sword",
+		"description": "",
+		"stackable": false,
+		"wearable": true,
+		"icon": preload("res://assets/Slime_sword.png"),
+		"sell_price": 35,
+		"buy_price": 120,
+		"bonus_damage": 7,
+		"item_type": "weapon"
+	},
 	"wooden_armor":{
 		"name": "Wooden Armor",
 		"description": "",
@@ -42,5 +53,15 @@ var items = {
 		"buy_price": 120,
 		"bonus_armor": 2,
 		"item_type": "armor"
+	}
+}
+var blueprint = {
+	"slime_sword":{
+		"name": "Slime Sword",
+		"amount": 1,
+		"ingredients":{
+			"wooden_sword": 1,
+			"slime_ball": 1
+		}
 	}
 }

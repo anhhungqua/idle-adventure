@@ -109,6 +109,7 @@ func button_setup():
 		back.visible = false
 		buttons.visible = true
 		guild_menu.visible = false
+		guild_menu.hide_all()
 		character_menu.visible = true)
 	
 

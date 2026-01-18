@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://ckyntiq4t3s4l"]
+[gd_scene load_steps=12 format=3 uid="uid://ckyntiq4t3s4l"]
 
 [ext_resource type="Theme" uid="uid://bxgqt7bk4a0aj" path="res://assets/Themes/menus_themes.tres" id="1_3s12b"]
 [ext_resource type="Texture2D" uid="uid://cprl8yhh1p8nb" path="res://assets/Guild_bg.png" id="1_dlnja"]
@@ -9,6 +9,8 @@
 [ext_resource type="Texture2D" uid="uid://bhoe61lhw0fko" path="res://assets/Shop_post.png" id="7_wsev5"]
 [ext_resource type="Texture2D" uid="uid://dxshqy6e6o8cc" path="res://assets/inventory_slot.png" id="8_g5wi0"]
 [ext_resource type="Texture2D" uid="uid://lbm26axlhx8g" path="res://assets/inventory_post.png" id="9_w25jr"]
+[ext_resource type="Texture2D" uid="uid://cjvqdjn45rpc7" path="res://assets/crafting_bg.png" id="10_g5wi0"]
+[ext_resource type="Texture2D" uid="uid://bqh1q6t1h6imk" path="res://assets/pointer.png" id="11_w25jr"]
 
 [node name="Guild Menu" type="Control"]
 layout_mode = 3
@@ -117,6 +119,33 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 50
 text = "Shop"
+horizontal_alignment = 1
+
+[node name="Craft" type="TextureButton" parent="HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 56)
+layout_mode = 2
+texture_normal = ExtResource("2_jt834")
+texture_pressed = ExtResource("2_jt834")
+texture_hover = ExtResource("2_jt834")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="HBoxContainer/Craft"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -108.0
+offset_top = -23.0
+offset_right = 108.0
+offset_bottom = 18.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 50
+text = "Craft"
 horizontal_alignment = 1
 
 [node name="quest_bg" type="TextureRect" parent="."]
@@ -333,6 +362,7 @@ offset_bottom = 634.0
 text = "Not Enough Money !"
 
 [node name="Shop_menu" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -2566,3 +2596,265 @@ grow_vertical = 0
 theme_override_font_sizes/font_size = 20
 horizontal_alignment = 2
 vertical_alignment = 2
+
+[node name="Crafting_menu" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="crafting_bg" type="TextureRect" parent="Crafting_menu"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -259.5
+offset_top = -205.0
+offset_right = 259.5
+offset_bottom = 205.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("10_g5wi0")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="Crafting_menu/crafting_bg"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -90.0
+offset_top = 38.0
+offset_right = 90.0
+offset_bottom = 86.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 60
+text = "CRAFTING"
+
+[node name="Result_slt" type="TextureButton" parent="Crafting_menu/crafting_bg"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -156.0
+offset_top = -45.0
+offset_right = -86.0
+offset_bottom = 25.0
+grow_horizontal = 0
+grow_vertical = 2
+texture_normal = ExtResource("8_g5wi0")
+texture_pressed = ExtResource("8_g5wi0")
+texture_hover = ExtResource("8_g5wi0")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Icon" type="TextureRect" parent="Crafting_menu/crafting_bg/Result_slt"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Count" type="Label" parent="Crafting_menu/crafting_bg/Result_slt"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -49.0
+offset_top = -31.0
+offset_right = -9.0
+offset_bottom = -7.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="ing_slt1" type="TextureButton" parent="Crafting_menu/crafting_bg"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 87.0
+offset_top = -45.0
+offset_right = 157.0
+offset_bottom = 25.0
+grow_vertical = 2
+texture_normal = ExtResource("8_g5wi0")
+texture_pressed = ExtResource("8_g5wi0")
+texture_hover = ExtResource("8_g5wi0")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Icon" type="TextureRect" parent="Crafting_menu/crafting_bg/ing_slt1"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Count" type="Label" parent="Crafting_menu/crafting_bg/ing_slt1"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -49.0
+offset_top = -31.0
+offset_right = -9.0
+offset_bottom = -7.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="inv_count" type="Label" parent="Crafting_menu/crafting_bg/ing_slt1"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 68.0
+offset_right = 62.0
+offset_bottom = 119.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Have:
+200"
+horizontal_alignment = 1
+
+[node name="ing_slt2" type="TextureButton" parent="Crafting_menu/crafting_bg"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 161.0
+offset_top = -45.0
+offset_right = 231.0
+offset_bottom = 25.0
+grow_vertical = 2
+texture_normal = ExtResource("8_g5wi0")
+texture_pressed = ExtResource("8_g5wi0")
+texture_hover = ExtResource("8_g5wi0")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Icon" type="TextureRect" parent="Crafting_menu/crafting_bg/ing_slt2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Count" type="Label" parent="Crafting_menu/crafting_bg/ing_slt2"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -49.0
+offset_top = -31.0
+offset_right = -9.0
+offset_bottom = -7.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="inv_count" type="Label" parent="Crafting_menu/crafting_bg/ing_slt2"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 68.0
+offset_right = 61.0
+offset_bottom = 119.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Have:
+200"
+horizontal_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="Crafting_menu/crafting_bg"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 24.0
+offset_top = -29.0
+offset_right = 64.0
+offset_bottom = 11.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("11_w25jr")
+
+[node name="craft_btn" type="TextureButton" parent="Crafting_menu/crafting_bg"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -60.0
+offset_top = 108.0
+offset_right = 60.0
+offset_bottom = 148.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("2_jt834")
+texture_pressed = ExtResource("2_jt834")
+texture_hover = ExtResource("2_jt834")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="Crafting_menu/crafting_bg/craft_btn"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -12.0
+offset_right = 20.0
+offset_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Craft"
